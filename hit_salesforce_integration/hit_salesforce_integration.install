@@ -1,0 +1,15 @@
+<?php
+/**
+ * @file
+ * Module stuff
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+
+function hit_salesforce_integration_uninstall(){
+  $database = \Drupal::database();
+  $result = $database->query("DELETE FROM {config} WHERE name = 'hit_salesforce_integration'")->execute();
+  drupal_flush_all_caches();
+}

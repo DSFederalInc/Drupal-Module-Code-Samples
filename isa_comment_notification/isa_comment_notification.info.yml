@@ -1,0 +1,4 @@
+type: module
+name: 'ISA Comment Notification'
+description: 'A Comment notification to send an emai to user assigned to section'
+core_version_requirement: ^8.8 || ^9 || ^10

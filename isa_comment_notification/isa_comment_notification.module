@@ -1,0 +1,149 @@
+<?php
+
+
+
+//use Drupal\comment\Entity;
+/**
+ * @file
+ *
+ * This module provides  a comment notification to respective user when there is a comment to a section that they assigned to 
+ */
+
+
+/*
+function isa_comment_notification_entity_load(array $entities, $entity_type_id)
+{
+      $node = \Drupal::routeMatch()->getParameter('node');
+      
+     // exit();
+    if(count($node)>0)
+    {
+    
+      $EntityId=$node->id();
+      $OwnerEmail= getWorkbeckAccessUser($EntityId);
+      echo $OwnerEmail;
+      exit();
+
+    }
+
+}
+
+
+ // Get user assigned to the section 
+    function  getWorkbeckAccessUser($node_id)
+  {
+    $node = \Drupal\node\Entity\Node::load($node_id); // load the host node
+
+
+
+
+    $SectionTaxonomy=$node->field_section_taxonomy->target_id;
+       $TaxonomyParentId=getTaxonomyParentID($SectionTaxonomy);
+    
+
+        $WorkBechValue = db_query('SELECT entity_id FROM {user__field_workbench_access} WHERE field_workbench_access_value = :wid or field_workbench_access_value = :pid'  , array(':wid' => $SectionTaxonomy,':pid' => $TaxonomyParentId));
+
+        
+        $OwnerEmailArray=[];
+        $WorkBechValueRecords = $WorkBechValue->fetchAll();
+       
+
+        //echo count($WorkBechValueRecords);
+        //exit();
+
+                        if(count($WorkBechValueRecords)>0)
+                          {
+                            
+                         foreach ($WorkBechValueRecords as $WorkBechValueRecord) {
+                            // Get Users Email
+                               $UserId=$WorkBechValueRecord->entity_id;
+                               $AssignedUerEmail=getIsaUser($UserId);
+                               if($AssignedUerEmail!="")
+                               {                               
+                               array_push($OwnerEmailArray, $AssignedUerEmail);
+                               }
+                             
+                             } 
+                              
+                        
+                        }
+                        else
+                        {
+
+                          $DefaultUser=1;
+                        }
+
+          
+
+            if(count($OwnerEmailArray)>1)
+            {
+                   $OwnerEmails=implode(',', $OwnerEmailArray);
+
+              return $OwnerEmails;
+
+            }
+            elseif (count($OwnerEmailArray)==1) {
+                return $OwnerEmailArray['0'];
+            }
+            elseif ($DefaultUser==1) {
+              return "Brett.Andriesen@hhs.gov"; //Default to Brett Email
+            }
+            else
+            {
+              return "Brett.Andriesen@hhs.gov"; //Default to Brett Email
+              
+            }
+
+     
+  } // this will return  user assigned to the section 
+
+
+   function getIsaUser($user_id)
+   {
+              $IsaUserQuery = db_query('SELECT mail FROM {users_field_data} WHERE uid = :uid', array(':uid' => $user_id));
+
+              $IsaUsers= $IsaUserQuery->fetchAll();
+               
+               foreach ($IsaUsers as $IsaUser) {
+                 return $IsaUser->mail;
+               }
+               return "";
+
+
+   }
+
+
+
+   function getTaxonomyParentID($SectionTaxonomy)
+   {
+            $IsaTaxonomyrQuery = db_query('SELECT parent FROM {taxonomy_term_hierarchy} WHERE tid = :tid', array(':tid' => $SectionTaxonomy));
+
+            $IsaTaxonomies= $IsaTaxonomyrQuery->fetchAll();
+               
+               foreach ($IsaTaxonomies as $IsaTaxonomy) {
+                 return $IsaTaxonomy->parent;
+               }
+               return "";
+
+
+   }
+
+*/
+    function isa_comment_notification_mail($key, &$message, $params)
+  {
+     $options = array(
+          'langcode' => $message['langcode'],
+        );
+             switch ($key) {
+                case 'isa_comment_notification':
+                      $message['from'] = \Drupal::config('system.site')->get('mail');
+                      $message['subject'] = $params['subject'];
+                      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+                      //t('ISA Standard Updated: @title', array('@title' => $params['node_title']), $options);
+                      $message['body'][] = $params['message'];
+                break;
+ }
+
+    return 1;
+
+  }

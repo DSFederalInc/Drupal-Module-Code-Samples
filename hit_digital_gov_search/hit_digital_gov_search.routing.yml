@@ -1,0 +1,7 @@
+hit_digital_gov_search.autocomplete:
+  path: '/hit_digital_gov_search'
+  defaults:
+    _controller: '\Drupal\hit_digital_gov_search\Controller\AutocompleteController::handleAutocomplete'
+    _format: json
+  requirements:
+    _access: 'TRUE'

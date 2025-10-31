@@ -1,0 +1,6 @@
+type: module
+name: Hit Salesforce integration
+description: 'Custom module for Salesforce integration with the speaker request form.'
+core_version_requirement: ^8.8 || ^9 || ^10
+dependencies:
+  - webform

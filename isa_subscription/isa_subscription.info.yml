@@ -1,0 +1,4 @@
+type: module
+name: 'ISA Subscription'
+description: 'A module to add subscription to a node change'
+core_version_requirement: ^8.8 || ^9 || ^10

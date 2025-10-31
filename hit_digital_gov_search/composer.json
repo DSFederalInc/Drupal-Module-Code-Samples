@@ -1,0 +1,14 @@
+{
+  "name": "drupal/hit_digital_gov_search",
+  "type": "drupal-module",
+  "description": "Provides the input field in a block for searching via the Digital Gov Search service.",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/hit_digital_gov_search",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/hit_digital_gov_search",
+    "source": "http://cgit.drupalcode.org/hit_digital_gov_search"
+  },
+  "require": { }
+}

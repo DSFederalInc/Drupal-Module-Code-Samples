@@ -1,0 +1,40 @@
+<?php
+/**
+ * @file
+ * Module stuff
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+
+function isa_subscription_uninstall(){
+  $database = \Drupal::database();
+  $result = $database->query("DELETE FROM {config} WHERE name = 'isa_subscription'")->execute();
+  drupal_flush_all_caches();
+}
+
+function isa_subscription_schema() {
+  $schema['isa_change_subscription'] = array(
+    'description' => 'Stores User-Subscription information.',
+    'fields' => array(
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => "Creator user's {users}.uid",
+      ),
+       'nid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => "Creator user's {users}.uid",
+      ),
+
+    ),
+  );
+
+  return $schema;
+}
+
+//Add create tabel to store the subscription  info

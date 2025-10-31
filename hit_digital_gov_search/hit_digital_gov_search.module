@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains hit_digital_gov_search.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function hit_digital_gov_search_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the hit_digital_gov_search module.
+    case 'help.page.hit_digital_gov_search':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides the input field in a block for searching via the Digital Gov Search service.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

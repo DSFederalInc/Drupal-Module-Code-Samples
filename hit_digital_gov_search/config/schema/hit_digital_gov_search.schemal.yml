@@ -1,0 +1,12 @@
+# Add configuration and settings form:
+# config/schema/hit_digital_gov_search.schema.yml
+hit_digital_gov_search.settings:
+  type: config_object
+  label: 'Digital Gov Search Settings'
+  mapping:
+    search_affiliate:
+      type: string
+      label: 'Search Affiliate ID'
+    search_endpoint:
+      type: string
+      label: 'Search API Endpoint'

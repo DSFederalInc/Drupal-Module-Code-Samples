@@ -1,0 +1,24 @@
+<?php
+
+/**
+ * @file
+ * Contains hit_salesforce_integration.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function hit_salesforce_integration_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the hit_digital_gov_search module.
+    case 'help.page.hit_salesforce_integration':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides Salesforce integration with the speaker request form so that information is entered into the saleforce database.') . '</p>';
+      return $output;
+
+    default:
+  }
+}

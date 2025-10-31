@@ -1,0 +1,5 @@
+name: HIT Digital Gov Search
+type: module
+description: Provides the input field in a block for searching via the Digital Gov Search service.
+core_version_requirement: ^8.8 || ^9 || ^10
+package: Search

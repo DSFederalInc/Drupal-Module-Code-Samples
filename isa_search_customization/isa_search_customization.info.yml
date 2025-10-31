@@ -1,0 +1,5 @@
+name: ISA Search Customization
+type: module
+description: Search customizations for isa site.
+core_version_requirement: ^8.8 || ^9 || ^10
+package: Custom

@@ -1,0 +1,7 @@
+isa_comment_notification.settings:
+  type: config_object
+  label: 'ISA Comment Notification Settings'
+  mapping:
+    default_notification_email:
+      type: email
+      label: 'Default notification email address'

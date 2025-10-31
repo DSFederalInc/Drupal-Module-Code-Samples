@@ -1,0 +1,15 @@
+<?php
+/**
+ * @file
+ * Module stuff
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+
+function isa_comment_notification_uninstall(){
+  $database = \Drupal::database();
+  $result = $database->query("DELETE FROM {config} WHERE name = 'isa_comment_notification'")->execute();
+  drupal_flush_all_caches();
+}

@@ -1,0 +1,160 @@
+<?php
+
+/**
+ * @file
+ * 
+ * This module provides a subscription Form to a node/ISA change 
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\node\NodeInterface;
+use Drupal\node\NodeTypeInterface;
+use Drupal\isa_subscription\Form\IsaSubscriptionForm;
+use Drupal\Component\Utility\Html;
+
+
+/**
+ * Implements hook_help().
+ */
+function isa_subscription_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.isa_subscription':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Provides a subscribe to a node change for and sends email to all subscribers when there is a change on the node that they subscribed.') . '</p>';
+      return $output;
+
+    default:
+  }
+ }
+
+  function isa_subscription_entity_update(EntityInterface $entity) 
+
+  { 
+    
+    if($entity->bundle()=='isa_document' && $entity->isDefaultRevision() && $entity->isPublished())
+    {
+        sendEmailSubscribers($entity->id(),$entity->label());
+        sendEmailSiteWideSubscribers($entity->id(),$entity->label());
+    }
+    elseif ( $entity->bundle()=='page' or $entity->bundle()=='article'){
+      
+      if ($entity->isDefaultRevision() && $entity->isPublished() )
+        sendEmailSiteWideSubscribers($entity->id(),$entity->label());
+      
+    }
+  	 
+     
+      
+  }
+
+//Sending email to ISA Page subscriber
+  function sendEmailSubscribers($node_id,$label)
+  {
+      $host = \Drupal::request()->getHost();
+
+      if ($host == 'healthitd8.ahrqdev.org' || $host == 'healthit.gov' || $host == 'localhost') {
+      
+        $mailManager = \Drupal::service('plugin.manager.mail');
+          $key = 'isa_document_updated';
+          $module = 'isa_subscription';
+
+          $langcode = \Drupal::currentUser()->getPreferredLangcode();
+          $send = true;
+          //$subscribe_query="SELECT uid FROM isa_change_subscription WHERE nid = :nid";
+          $database = \Drupal::database();
+          $subscribers_result = $database->query("SELECT uid FROM isa_change_subscription WHERE nid =:nid", [':nid' => $node_id,]);
+  
+          if($subscribers_result)
+          {
+              while ($subscriber = $subscribers_result->fetchAssoc()) {
+                  $subscriber_info=\Drupal\user\Entity\User::load($subscriber['uid']);
+                  $subscriber_email=$subscriber_info->getEmail();
+
+                  $full_link=\Drupal::request()->getHttpHost()."/isp/node/".$node_id;
+
+                  $link='<a href="'.$full_link.'">'.$label.'</a>';
+
+                  $params['subject'] = "ISA Change Notification Subscription:".$label;
+
+                  $params['message'] = Html::escape("Hello ".$subscriber_info->get('name')->getString().",<p> </p> <p>  A change has been made to the ISA Interoperability Need or page you have subscribed to, listed below. You may unsubscribe from these notifications at any time by visiting the page and clicking “unsubscribe” while logged in to the ISP.</p> ".$link."<p> </p>Thank You,<br>ISP Team");
+                
+
+                  $result=$mailManager->mail($module, $key, $subscriber_email, $langcode, $params, NULL, $send);
+                  
+              }
+          }
+
+      }
+
+  }
+
+
+
+//Sending email to Site wide  subscriber
+  function sendEmailSiteWideSubscribers($node_id,$label)
+  {
+      $host = \Drupal::request()->getHost();
+      if ($host == 'healthit.gov' || $host == 'healthitd8.ahrqdev.org' || $host == 'localhost') {
+          $mailManager = \Drupal::service('plugin.manager.mail');
+          $key = 'isa_document_updated';
+          $module = 'isa_subscription';
+
+          $langcode = \Drupal::currentUser()->getPreferredLangcode();
+          $send = true;
+          $node_id_site_wide=0;
+          $database = \Drupal::database();
+          $subscribers_result = $database->query("SELECT uid FROM isa_change_subscription WHERE nid =:nid", [':nid' => $node_id_site_wide,]);
+          
+          if($subscribers_result)
+          {
+              while ($subscriber = $subscribers_result->fetchAssoc()) {
+
+                  $subscriber_info=\Drupal\user\Entity\User::load($subscriber['uid']);
+                  $subscriber_email=$subscriber_info->getEmail();
+
+
+                  $full_link=\Drupal::request()->getHttpHost()."/isp/node/".$node_id;
+
+                  $link='<a href="'.$full_link.'">'.$label.'</a>';
+                  $home_page=\Drupal::request()->getHttpHost()."/isp/";
+                  $recent_isa_page=\Drupal::request()->getHttpHost()."/isp/recent-isa-updates/";
+                  $params['subject'] = "ISA Change Notification Subscription:".$label;
+
+                  $params['message'] = Html::escape("Hello ".$subscriber_info->get('name')->getString().",<p> </p> <p>  A change has been made to the ISA page listed below. You may unsubscribe from these notifications at any time by visiting ".$recent_isa_page." and clicking “unsubscribe” while logged in to the ISP.</p> ".$link."<p><br> </p>Thank You,<br>ISP Team");
+
+                  $result=$mailManager->mail($module, $key, $subscriber_email, $langcode, $params, NULL, $send);
+              
+                }
+          }
+      }
+
+
+  }
+
+  /**
+* Implements hook_mail().
+*/
+
+  function isa_subscription_mail($key, &$message, $params)
+  {
+  	 $options = array(
+          'langcode' => $message['langcode'],
+        );
+  	         switch ($key) {
+                case 'isa_document_updated':
+                      $message['from'] = \Drupal::config('system.site')->get('mail');
+                      $message['subject'] = $params['subject'];
+                      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+                      //t('ISA Standard Updated: @title', array('@title' => $params['node_title']), $options);
+                      $message['body'][] = $params['message'];
+                break;
+ }
+
+  }
+
+
+
+
